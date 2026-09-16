@@ -1,0 +1,12 @@
+{
+  "name": "deepcopy",
+  "version": "0.1.0",
+  "description": "Analyses Momentum, recommandations et scan de marché Deep Copy dans Claude Code.",
+  "author": {
+    "name": "Deep Copy",
+    "url": "https://deepcopy.fr"
+  },
+  "homepage": "https://deepcopy.fr/#momentum-mcp",
+  "repository": "https://github.com/kaligautier/plugin-deepcopy",
+  "keywords": ["deepcopy", "momentum", "mcp", "market-analysis"]
+}

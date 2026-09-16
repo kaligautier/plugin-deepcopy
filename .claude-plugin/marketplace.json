@@ -1,0 +1,14 @@
+{
+  "name": "deepcopy-plugins",
+  "description": "Plugin Claude Code pour accéder au MCP public Momentum de Deep Copy.",
+  "owner": {
+    "name": "Deep Copy"
+  },
+  "plugins": [
+    {
+      "name": "deepcopy",
+      "source": "./",
+      "description": "Analyses Momentum et scan de marché via le MCP public Deep Copy."
+    }
+  ]
+}
