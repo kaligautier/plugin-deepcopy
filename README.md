@@ -1,7 +1,7 @@
 # Deep Copy pour Claude Code
 
-Les analyses Momentum et le scan de marché [Deep Copy](https://deepcopy.fr/#momentum-mcp)
-dans Claude Code, avec cinq commandes et une connexion au MCP public
+Les analyses Momentum et les recommandations [Deep Copy](https://deepcopy.fr/#momentum-mcp)
+dans Claude Code, avec quatre commandes et une connexion au MCP public
 `https://mcp.deepcopy.fr`. Aucune clé API ni serveur local à installer.
 
 ## Démarrage rapide
@@ -19,7 +19,6 @@ Ouvre ensuite une nouvelle session Claude Code dans ton projet :
 /mcp
 /deepcopy:analysis AAPL
 /deepcopy:recommendations Buy,Overweight 5
-/deepcopy:market-scan
 ```
 
 `/mcp` permet de vérifier la connexion au serveur `momentum` du plugin `deepcopy`.
@@ -62,14 +61,13 @@ claude plugin uninstall deepcopy@deepcopy-plugins --scope user
 | `/deepcopy:analysis` | Liste les dernières analyses disponibles, avec leurs dates et identifiants. |
 | `/deepcopy:analysis AAPL historique` | Consulte une page d'historique pour ce ticker. |
 | `/deepcopy:recommendations Buy,Overweight 5` | Retourne jusqu'à cinq recommandations correspondant aux ratings. Sans argument : `Buy,Overweight`, limite 10. |
-| `/deepcopy:market-scan` | Lit le dernier scan quotidien disponible et ses signaux par actif. |
 | `/deepcopy:suggest ASML Suivre les prochains résultats` | Envoie explicitement une proposition de ticker à modérer. |
 | `/deepcopy:suggestion-status <UUID>` | Consulte une suggestion avec le `suggestion_id` retourné par le service. |
 
 `analysis` accepte aussi un UUID d'analyse. Remplace `<UUID>` par un identifiant
 réel ; un symbole boursier ne remplace pas un `suggestion_id`.
 
-Les quatre skills de lecture peuvent être sélectionnés par Claude lorsqu'une
+Les trois skills de lecture peuvent être sélectionnés par Claude lorsqu'une
 demande correspond à leur description. `suggest` est réservé à l'invocation
 manuelle grâce à `disable-model-invocation: true`. Consulter un ticker absent ne
 crée pas de suggestion. Une suggestion `pending` attend une modération et ne
@@ -82,14 +80,17 @@ signifie pas « en temps réel » : les analyses peuvent dater de plusieurs mois
 Les recommandations et niveaux de prix sont ceux publiés par Momentum.
 
 Une réponse HTTP 200 contenant `isError: true` reste une erreur. Le plugin la
-signale au lieu de produire un résultat de remplacement. Au contrôle du
-16 septembre 2026, les lectures d'analyses et de recommandations fonctionnaient,
-mais `latest_market_scan` retournait `Momentum public API request failed.`.
+signale au lieu de produire un résultat de remplacement.
 Voir le [bilan de vérification](docs/verification.md) pour le périmètre testé.
 
-Les sept outils et leurs paramètres sont détaillés dans
+Les six outils utilisés par le plugin et leurs paramètres sont détaillés dans
 [la référence Momentum](references/momentum.md). Les schémas découverts sur le
 serveur font autorité en cas d'évolution.
+
+La connexion MCP directe restitue le catalogue du serveur, qui peut inclure des
+outils supplémentaires visibles dans Claude Code. Les skills et le diagnostic
+se limitent aux six outils décrits dans cette référence ; le plugin ne filtre
+pas les outils annoncés par le serveur distant.
 
 ## Développement et vérification
 
@@ -105,7 +106,7 @@ python3 -m unittest discover -s tests -v
 python3 scripts/check_mcp.py
 ```
 
-Le diagnostic initialise le MCP, découvre les outils, teste quatre lectures et
+Le diagnostic initialise le MCP, découvre les outils, teste trois lectures et
 charge le détail d'un identifiant réellement retourné. Il affiche séparément les
 outils non testés, ne soumet aucune suggestion et sort avec le code 1 si une
 lecture testée échoue. Une liste vide valide est distinguée d'une erreur.
@@ -118,7 +119,7 @@ dans une session démarrée avec `--plugin-dir`.
 ```text
 .claude-plugin/    Manifestes du plugin et de sa marketplace
 .mcp.json         Connexion HTTP au MCP public
-skills/           Cinq commandes Claude Code
+skills/           Quatre commandes Claude Code
 references/       Paramètres et règles de restitution
 scripts/          Diagnostic réseau à lancer explicitement
 tests/            Tests du décodage JSON/SSE et des erreurs MCP
