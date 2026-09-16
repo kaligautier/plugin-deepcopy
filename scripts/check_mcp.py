@@ -10,7 +10,7 @@ from urllib.request import Request, urlopen
 
 EXPECTED_TOOLS = {
     "list_analyses", "latest_analyses", "get_analysis", "get_recommendations",
-    "latest_market_scan", "suggest_ticker", "get_suggestion_status",
+    "suggest_ticker", "get_suggestion_status",
 }
 
 
@@ -80,6 +80,7 @@ class Client:
 
 def main():
     root = Path(__file__).resolve().parents[1]
+    version = json.loads((root / ".claude-plugin/plugin.json").read_text())["version"]
     config = json.loads((root / ".mcp.json").read_text())["mcpServers"]["momentum"]
     if config != {"type": "http", "url": "https://mcp.deepcopy.fr"}:
         raise ValueError("Ce diagnostic est réservé au MCP public Deep Copy sans authentification")
@@ -88,7 +89,7 @@ def main():
     info = client.send("initialize", {
         "protocolVersion": protocol,
         "capabilities": {},
-        "clientInfo": {"name": "deepcopy-plugin-check", "version": "0.1.0"},
+        "clientInfo": {"name": "deepcopy-plugin-check", "version": version},
     })
     if info.get("protocolVersion") != protocol:
         raise ValueError(f"Version non prise en charge par ce diagnostic : {info.get('protocolVersion')}")
@@ -100,7 +101,11 @@ def main():
     missing = EXPECTED_TOOLS - available
     if missing:
         raise ValueError(f"Outils manquants : {', '.join(sorted(missing))}")
-    print(f"OK tools/list : {len(available)} outils, les 7 attendus sont présents", flush=True)
+    print(
+        f"OK tools/list : {len(available)} outils exposés, "
+        f"les {len(EXPECTED_TOOLS)} utilisés par le plugin sont présents",
+        flush=True,
+    )
 
     failures = 0
     latest = []
@@ -108,20 +113,14 @@ def main():
         ("list_analyses", {"limit": 1, "offset": 0}),
         ("latest_analyses", {}),
         ("get_recommendations", {"limit": 1}),
-        ("latest_market_scan", {}),
     ):
         try:
             data = tool_data(client.send("tools/call", {"name": name, "arguments": arguments}))
-            if name == "latest_market_scan":
-                if not isinstance(data, dict) or not data:
-                    raise ValueError("Aucun scan disponible")
-                summary = f"scan_date={data.get('scan_date', 'non fournie')}"
-            else:
-                if not isinstance(data, list):
-                    raise ValueError("Liste d'analyses attendue")
-                summary = f"{len(data)} résultat(s)"
-                if name == "latest_analyses":
-                    latest = data
+            if not isinstance(data, list):
+                raise ValueError("Liste d'analyses attendue")
+            summary = f"{len(data)} résultat(s)"
+            if name == "latest_analyses":
+                latest = data
             print(f"OK {name} : {summary}", flush=True)
         except (URLError, OSError, ValueError) as error:
             failures += 1

@@ -4,6 +4,9 @@ Serveur public : `https://mcp.deepcopy.fr`, transport Streamable HTTP, sans clé
 Utilise les outils du serveur `momentum` fourni par le plugin `deepcopy`. Claude
 Code peut préfixer leurs noms avec le nom du plugin : repère les noms ci-dessous
 dans les outils MCP disponibles. Le schéma découvert par le client fait autorité.
+Pour les demandes traitées par ce plugin, utilise uniquement les six outils du
+tableau ci-dessous. Les autres outils éventuellement annoncés par le serveur
+public sont hors du périmètre de ces skills.
 
 ## Paramètres
 
@@ -15,7 +18,6 @@ Vérifiés avec `tools/list` le 16 septembre 2026.
 | `latest_analyses` | `ticker`: chaîne ou `null`, défaut `null` ; `rating`: chaîne ou `null`, défaut `null` | Dernière analyse disponible par ticker. |
 | `get_analysis` | `analysis_id`: chaîne UUID requise | Détail d'une analyse existante. |
 | `get_recommendations` | `rating`: chaîne, défaut `Buy,Overweight` ; `limit`: entier de 1 à 100, défaut 10 | Dernières analyses correspondant aux ratings. |
-| `latest_market_scan` | Aucun : `{}` | Dernier scan quotidien disponible et ses signaux. |
 | `suggest_ticker` | `symbol`: chaîne requise ; `reason`: chaîne de 500 caractères maximum, défaut `""` | Proposition à modérer ; peut créer une suggestion. |
 | `get_suggestion_status` | `suggestion_id`: chaîne UUID requise | Statut de modération d'une suggestion existante. |
 
@@ -43,7 +45,7 @@ et son `reason` omis vaut une chaîne vide, pas `null`.
 ## Restituer les données
 
 - Réponds dans la langue de l'utilisateur, en français par défaut.
-- Donne le ticker, `analysis_date` ou `scan_date`, et l'identifiant disponible.
+- Donne le ticker, `analysis_date` et l'identifiant disponible.
   `created_at` décrit l'enregistrement ; ce n'est pas nécessairement la date
   de l'analyse. Si la date manque, indique « date non fournie ».
 - « Dernière disponible » ne signifie pas « actuelle ». Signale explicitement

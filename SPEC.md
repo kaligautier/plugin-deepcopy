@@ -3,7 +3,7 @@
 ## Objectif
 
 Connecter Claude Code au MCP public Momentum depuis un plugin autonome nommé
-`deepcopy`. Fournir cinq skills : `analysis`, `recommendations`, `market-scan`,
+`deepcopy`. Fournir quatre skills : `analysis`, `recommendations`,
 `suggest` et `suggestion-status`. La consultation d'une analyse doit résoudre
 un ticker vers un identifiant réel avant de charger son détail.
 
@@ -34,8 +34,9 @@ claude --plugin-dir .
 
 ## Critères d'acceptation
 
-1. Les manifestes et les cinq skills sont reconnus par Claude Code.
-2. Le MCP expose les sept outils attendus ; les paramètres viennent de `tools/list`.
+1. Les manifestes et les quatre skills sont reconnus par Claude Code.
+2. Le MCP expose les six outils utilisés par le plugin ; les paramètres viennent
+   de `tools/list`. Les outils supplémentaires du serveur ne sont pas testés.
 3. Les consultations utilisent les données retournées, leur date et leurs identifiants.
 4. Une erreur JSON-RPC ou `isError: true` est signalée, même avec HTTP 200.
 5. Une suggestion n'est envoyée que sur demande explicite ; `pending` n'est pas

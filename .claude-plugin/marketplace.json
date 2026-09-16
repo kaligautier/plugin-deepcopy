@@ -8,7 +8,7 @@
     {
       "name": "deepcopy",
       "source": "./",
-      "description": "Analyses Momentum et scan de marché via le MCP public Deep Copy."
+      "description": "Analyses Momentum, recommandations et suggestions de tickers via le MCP public Deep Copy."
     }
   ]
 }
